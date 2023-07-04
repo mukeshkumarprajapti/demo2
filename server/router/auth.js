@@ -99,4 +99,14 @@ router.post("/login", async (req, res) => {
   }
 });
 
+
+//forgetpassword route
+ const forgetPassword = async(req, res) => {
+  try {
+    res.render("forget")
+  }catch(err) {
+    console.log(error);
+  }
+ }
+
 module.exports = router;

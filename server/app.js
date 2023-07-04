@@ -2,12 +2,13 @@ const dotenv = require('dotenv');
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
+const cors = require('cors')
  
  dotenv.config({ path: './config.env'});
 require('./db/conn');
 //   const User = require('./model/userSchema'); 
 app.use(express.json());
-
+app.use(cors())
 app.use(require('./router/auth'));
 
 const PORT = process.env.PORT
@@ -22,10 +23,10 @@ const middleware = (req, res, next) => {
     next();
 }
 
-// app.get('/', (req, res) => {
-//     res.send('Hello world from homepage')
+app.get('/', (req, res) => {
+    res.send('Hello world from homepage')
   
-// })
+})
 
 app.get('/about', middleware, (req, res) => {
     res.send('Hello world from about page')
@@ -43,6 +44,6 @@ app.get('/signin', (req, res) => {
     res.send('Hello world from login page')
 })
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
     console.log(`server start on http://localhost:${PORT}`)
 })
