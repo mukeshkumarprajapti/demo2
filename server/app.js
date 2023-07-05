@@ -16,21 +16,13 @@ const PORT = process.env.PORT
 
 
 
-// middleware
 
-const middleware = (req, res, next) => {
-    console.log('hello my middleware')
-    next();
-}
 
-app.get('/', (req, res) => {
-    res.send('Hello world from homepage')
-  
-})
 
-app.get('/about', middleware, (req, res) => {
-    res.send('Hello world from about page')
-})
+
+// app.get('/about', (req, res) => {
+//     res.send('Hello world from about page')
+// });
 
 app.get('/contact', (req, res) => {
     res.send('Hello world from contact page')
@@ -40,9 +32,9 @@ app.get('/signup', (req, res) => {
     res.send('Hello world from restation page')
 })
 
-app.get('/signin', (req, res) => {
-    res.send('Hello world from login page')
-})
+// app.get('/signin', (req, res) => {
+//     res.send('Hello world from login page')
+// })
 
 app.listen(PORT, () => {
     console.log(`server start on http://localhost:${PORT}`)

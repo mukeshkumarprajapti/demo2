@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const authenticate = require('../middleware/authenticate');
 
 require("../db/conn");
 const User = require("../model/userSchema");
@@ -100,13 +101,13 @@ router.post("/login", async (req, res) => {
 });
 
 
-//forgetpassword route
- const forgetPassword = async(req, res) => {
-  try {
-    res.render("forget")
-  }catch(err) {
-    console.log(error);
-  }
- }
+//about us ka page
+
+router.get('/about', authenticate , (req, res) => {
+  console.log('hello my about')
+  res.send(req.rootUser);
+});
+ 
+
 
 module.exports = router;
