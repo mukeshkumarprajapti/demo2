@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useNavigate  } from 'react-router-dom'
 
 const About = () => {
+  
 
   const navigate = useNavigate();
 
@@ -11,13 +12,14 @@ const About = () => {
         method: 'GET',
         headers: {
            'Accept': 'application/json',
-            "Content-Type": 'application/json'
+            "Content-Type" : 'application/json'
           },
           credentials: "include"
       });
 
       const data = await res.json();
       console.log(data);
+     
 
       if(!res.status === 200){
         const error = new Error(res.error);
@@ -33,12 +35,15 @@ const About = () => {
 
   useEffect(() => {
     callAboutPage();
-  }, [])
-
+  }, []);
+ 
   return (
     <>
-    <p className="pt-5 text-center">WELCOME</p>
+    <form method="GET" >
+    <p className="pt-5 text-center">WELCOME </p>
     <h1 className="text-center">We Are About Page</h1>
+    </form>
+    
     </>
   )
 }

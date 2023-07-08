@@ -8,10 +8,13 @@ const cors = require('cors')
 require('./db/conn');
 //   const User = require('./model/userSchema'); 
 app.use(express.json());
-app.use(cors())
+app.use(cors({
+    credentials: true,
+    origin:"http://localhost:5173"
+}))
 app.use(require('./router/auth'));
 
-const PORT = process.env.PORT
+const PORT = process.env.PORT;
 
 
 
@@ -22,7 +25,7 @@ const PORT = process.env.PORT
 
 // app.get('/about', (req, res) => {
 //     res.send('Hello world from about page')
-// });
+// })
 
 app.get('/contact', (req, res) => {
     res.send('Hello world from contact page')

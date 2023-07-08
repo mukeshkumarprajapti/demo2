@@ -82,7 +82,7 @@ router.post("/login", async (req, res) => {
       const token = await userLogin.generateAuthToken();
       console.log(token);
 
-      res.cookie("jwtoten", token, {
+      res.cookie("jwtoken", token, {
          expires:new Date(Date.now() + 25892000000 ),
          httpOnly:true
         });
@@ -104,7 +104,7 @@ router.post("/login", async (req, res) => {
 //about us ka page
 
 router.get('/about', authenticate , (req, res) => {
-  console.log('hello my about')
+  console.log(`hello my about`);
   res.send(req.rootUser);
 });
  
