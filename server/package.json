@@ -1,7 +1,6 @@
 {
   "name": "marn-mkpp",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -18,6 +17,7 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.1.1",
-    "nodemon": "^2.0.22"
-  }
+    "https://github.com/mukeshkumarprajapti/demo2.git": "^2.0.22"
+  },
+  "description": ""
 }
