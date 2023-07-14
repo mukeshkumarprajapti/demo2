@@ -33,3 +33,5 @@ const Logout = () => {
 }
 
 export default Logout
+
+// DATABASE = mongodb+srv://prajaptimukesh770:kumar%4013@youtube.irlsppy.mongodb.net/mukesh
