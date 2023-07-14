@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate  } from 'react-router-dom'
 
 const About = () => {
   
 
   const navigate = useNavigate();
+  const [useData, setUserData] = useState({});
 
   const callAboutPage = async () => {
     try {
@@ -19,7 +20,7 @@ const About = () => {
 
       const data = await res.json();
       console.log(data);
-     
+      setUserData(data);
 
       if(!res.status === 200){
         const error = new Error(res.error);
@@ -40,7 +41,7 @@ const About = () => {
   return (
     <>
     <form method="GET" >
-    <p className="pt-5 text-center">WELCOME </p>
+    <p className="pt-5 text-center text-capitalize">WELCOME {useData.name} </p>
     <h1 className="text-center">We Are About Page</h1>
     </form>
     

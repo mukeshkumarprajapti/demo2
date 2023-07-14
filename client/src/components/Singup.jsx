@@ -35,13 +35,14 @@ const Singup = () => {
 
     const data = await res.json();
 
-    if(data.status === 422 || !data ){
+    if(res.status === 422 || !data ){
       window.alert("Invalid Registration");
       console.log("Invalid Registration");
     }else{
       window.alert("Registration successfull");
       console.log("successfull Registration");
       navigate('/login');
+
 
       
     }

@@ -6,6 +6,7 @@ const Login = () => {
   const navigate  = useNavigate();
 
 
+
   const [user, setUser] = useState({
     email:'', password:'' 
    });
@@ -30,10 +31,14 @@ const Login = () => {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
          email, password
-      })
+      }),
+      credentials: "include"
+
     });
 
     const data = await res.json();
+
+
 
     if (data.status === 400 || !data ) {
       window.alert("Invalid Credentials");
@@ -42,6 +47,7 @@ const Login = () => {
       window.alert("login successfull");
       console.log("login done");
       navigate('/')
+     
       
 
       
