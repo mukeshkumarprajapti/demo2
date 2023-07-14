@@ -6,6 +6,7 @@ import About from './components/About'
 import Contact from './components/Contact'
 import Login from './components/Login'
 import Singup from './components/Singup'
+import Logout from './components/Logout'
 
 
 const App = () => {
@@ -18,6 +19,7 @@ const App = () => {
     <Route exact path="/contact" element={<Contact/>}/>
     <Route exact path="/login" element={<Login/>}/>
     <Route exact path="/singup" element={<Singup/>}/>
+    <Route exact path="/logout" element={<Logout/>}/>
     
     </Routes>
     

@@ -109,6 +109,20 @@ router.get('/about', authenticate , (req, res) => {
   res.send(req.rootUser);
 });
  
+//get user data
 
+router.get('/getdata', authenticate , (req, res) => {
+  console.log(`hello my contact`);
+  res.send(req.rootUser);
+});
+
+//logout us ka page
+
+router.get('/logout', (req, res) => {
+  console.log('hello my logout');
+  res.clearCookie('jwtoken', {path:'/'})
+  res.send(req.rootUser);;
+});
+ 
 
 module.exports = router;
