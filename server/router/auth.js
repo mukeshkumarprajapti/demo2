@@ -158,4 +158,33 @@ router.get('/logout', (req, res) => {
 });
  
 
+router.post('/forgetpassword', async (req, res) => {
+  try{
+  const { email } = req.body;
+
+  if (!email ) {
+    return res.status(404).json({ error: "plz filled the data" });
+  }
+
+  const Data = await User.findOne({ email: email });
+
+  if(Data){
+    const otpCode = Math.floor((Math.random()*10000)+1);
+    const otp = new Otp({
+      email:email,
+      code: otpCode,
+      expiresAt: moment().add(1, 'minute'),
+    })
+    await otp.save();
+
+    res.status(201).json({ massage: "Please check your email" });
+  }else{
+    res.status(400).json({ error: "email  Id not exist" });
+  }
+}catch (err) {
+  console.log(err);
+}
+
+});
+
 module.exports = router;
