@@ -9,7 +9,7 @@ const authenticate = require('../middleware/authenticate');
 require("../db/conn");
 const User = require("../model/userSchema");
 const Otp = require("../model/otpSchema");
-
+ const transporter = require("../emailSend/transporter");
 // *****using promises
 
 router.get("/", (req, res) => {
@@ -113,34 +113,34 @@ router.get('/about', authenticate , (req, res) => {
 
 
 
-router.post('/forgetpassword', async (req, res) => {
-  try{
-  const { email } = req.body;
+// router.post('/forgetpassword', async (req, res) => {
+//   try{
+//   const { email } = req.body;
 
-  if (!email ) {
-    return res.status(404).json({ error: "plz filled the data" });
-  }
+//   if (!email ) {
+//     return res.status(404).json({ error: "plz filled the data" });
+//   }
 
-  const Data = await User.findOne({ email: email });
+//   const Data = await User.findOne({ email: email });
 
-  if(Data){
-    const otpCode = Math.floor((Math.random()*10000)+1);
-    const otp = new Otp({
-      email:email,
-      code: otpCode,
-      expiresAt: moment().add(1, 'minute'),
-    })
-    await otp.save();
+//   if(Data){
+//     const otpCode = Math.floor((Math.random()*10000)+1);
+//     const otp = new Otp({
+//       email:email,
+//       code: otpCode,
+//       expiresAt: moment().add(1, 'minute'),
+//     })
+//     await otp.save();
 
-    res.status(201).json({ massage: "Please check your email" });
-  }else{
-    res.status(400).json({ error: "email  Id not exist" });
-  }
-}catch (err) {
-  console.log(err);
-}
+//     res.status(201).json({ massage: "Please check your email" });
+//   }else{
+//     res.status(400).json({ error: "email  Id not exist" });
+//   }
+// }catch (err) {
+//   console.log(err);
+// }
 
-});
+// });
  
 //get user data
 
@@ -177,7 +177,19 @@ router.post('/forgetpassword', async (req, res) => {
     })
     await otp.save();
 
-    res.status(201).json({ massage: "Please check your email" });
+    
+
+    const info = await transporter.sendMail({
+      from:'mukeshkumarprajapati666@gmail.com', 
+      to: Data.email,
+      subject: "send otp",
+      text: "otp for your reset password is {code}", 
+     
+    });
+    console.log("Message sent: %s", info.messageId);
+   
+    res.status(200).json({ massage: "Email sent, please check your email" });
+
   }else{
     res.status(400).json({ error: "email  Id not exist" });
   }

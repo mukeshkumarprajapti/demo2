@@ -5,7 +5,7 @@ const app = express();
 const cors = require('cors')
 const cookieParser = require('cookie-parser');
  
- dotenv.config({ path: './config.env'});
+dotenv.config({ path: './config.env'});
 require('./db/conn');
 //   const User = require('./model/userSchema'); 
 app.use(express.json());
