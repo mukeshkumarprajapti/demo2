@@ -2,11 +2,13 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const moment = require('moment');
 const authenticate = require('../middleware/authenticate');
 
 
 require("../db/conn");
 const User = require("../model/userSchema");
+const Otp = require("../model/otpSchema");
 
 // *****using promises
 
@@ -107,6 +109,37 @@ router.post("/login", async (req, res) => {
 router.get('/about', authenticate , (req, res) => {
   console.log(`hello my about`);
   res.send(req.rootUser);
+});
+
+
+
+router.post('/forgetpassword', async (req, res) => {
+  try{
+  const { email } = req.body;
+
+  if (!email ) {
+    return res.status(404).json({ error: "plz filled the data" });
+  }
+
+  const Data = await User.findOne({ email: email });
+
+  if(Data){
+    const otpCode = Math.floor((Math.random()*10000)+1);
+    const otp = new Otp({
+      email:email,
+      code: otpCode,
+      expiresAt: moment().add(1, 'minute'),
+    })
+    await otp.save();
+
+    res.status(201).json({ massage: "Please check your email" });
+  }else{
+    res.status(400).json({ error: "email  Id not exist" });
+  }
+}catch (err) {
+  console.log(err);
+}
+
 });
  
 //get user data
