@@ -2,12 +2,12 @@
 
 
  const transporter = nodemailer.createTransport({
-  host: 'smtp.forwardemail.net',
-  port: 465,
-  secure: false,
+  service: 'gmail',
+  port: 587,
+  secure: true,
   auth: {
-      user: 'mukeshkumarprajapati666@gmail.com',
-      pass: '77008075'
+      user: 'prajaptimukesh770@gmail.com',
+      pass: 'qqkgmgganwolbduj'
   }
 });
 

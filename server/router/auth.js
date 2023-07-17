@@ -113,37 +113,6 @@ router.get('/about', authenticate , (req, res) => {
 
 
 
-// router.post('/forgetpassword', async (req, res) => {
-//   try{
-//   const { email } = req.body;
-
-//   if (!email ) {
-//     return res.status(404).json({ error: "plz filled the data" });
-//   }
-
-//   const Data = await User.findOne({ email: email });
-
-//   if(Data){
-//     const otpCode = Math.floor((Math.random()*10000)+1);
-//     const otp = new Otp({
-//       email:email,
-//       code: otpCode,
-//       expiresAt: moment().add(1, 'minute'),
-//     })
-//     await otp.save();
-
-//     res.status(201).json({ massage: "Please check your email" });
-//   }else{
-//     res.status(400).json({ error: "email  Id not exist" });
-//   }
-// }catch (err) {
-//   console.log(err);
-// }
-
-// });
- 
-//get user data
-
 router.get('/getdata', authenticate , (req, res) => {
   console.log(`hello my contact`);
   res.send(req.rootUser);
@@ -169,7 +138,7 @@ router.post('/forgetpassword', async (req, res) => {
   const Data = await User.findOne({ email: email });
 
   if(Data){
-    const otpCode = Math.floor((Math.random()*10000)+1);
+  const otpCode = Math.floor((Math.random()*10000)+1);
     const otp = new Otp({
       email:email,
       code: otpCode,
@@ -180,10 +149,10 @@ router.post('/forgetpassword', async (req, res) => {
     
 
     const info = await transporter.sendMail({
-      from:'mukeshkumarprajapati666@gmail.com', 
+      from:'prajaptimukesh770@gmail.com', 
       to: Data.email,
       subject: "send otp",
-      text: "otp for your reset password is {code}", 
+      text: `otp for your reset password is: ${otpCode}`, 
      
     });
     console.log("Message sent: %s", info.messageId);
@@ -198,5 +167,26 @@ router.post('/forgetpassword', async (req, res) => {
 }
 
 });
+
+
+router.post("/resetpassword", async (req, res) => {
+  try {
+    const { code } = req.body;
+
+    if (!code) {
+      return res.status(400).json({ error: "plz filled the data" });
+    }
+
+    const userLogin = await Otp.findOne({ code: code });
+
+    if (userLogin) {
+      const isMatch = await bcrypt.compare(code, userLogin.code);
+
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 
 module.exports = router;

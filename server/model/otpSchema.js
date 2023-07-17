@@ -8,8 +8,10 @@ const otpSchema = new mongoose.Schema({
         
     },
     code: {
-        type: Number,
+        type: String,
         
+    },expireIn: {
+        type: Number,
     }
 },{
     timestamps:true,
