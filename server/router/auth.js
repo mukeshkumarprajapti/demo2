@@ -139,14 +139,15 @@ router.post('/forgetpassword', async (req, res) => {
 
   if(Data){
   const otpCode = Math.floor((Math.random()*10000)+1);
-    const otp = new Otp({
-      email:email,
-      code: otpCode,
-      expiresAt: moment().add(1, 'minute'),
-    })
-    await otp.save();
+  const expire = Date.now() + 10*60 * 60 * 1000;
+    // const otp = new Otp({
+    //   email:email,
+    //   code: otpCode,
+    //   expireIn: new Date().getTime() + 300*1000
+    // })
+    // await otp.save();
 
-    
+   const data = await User.updateOne({email:Data.email}, {$set:{Otp:otpCode, expireIn:expire }}) 
 
     const info = await transporter.sendMail({
       from:'prajaptimukesh770@gmail.com', 
@@ -171,21 +172,34 @@ router.post('/forgetpassword', async (req, res) => {
 
 router.post("/resetpassword", async (req, res) => {
   try {
-    const { code } = req.body;
+    const { Otp } = req.body;
 
-    if (!code) {
+    if (!Otp) {
       return res.status(400).json({ error: "plz filled the data" });
     }
 
-    const userLogin = await Otp.findOne({ code: code });
+    const userLogin = await User.findOne({ Otp: Otp });
 
     if (userLogin) {
-      const isMatch = await bcrypt.compare(code, userLogin.code);
+      const currentTime = Date.now();
+      const diff = userLogin.expireIn - currentTime;
+      if(diff < 0){
+        return res.status(404).json({ error: "Token Expire" });
+      }else{
+        
+        return res.status(200).json({ massage: "Token verified" });
+      }
+      }else{
+        return res.status(400).json({ error: "Invalid Otp" });
 
     }
   } catch (err) {
     console.log(err);
   }
+});
+
+router.get("/updatepassword", async (req, res) => {
+  
 });
 
 

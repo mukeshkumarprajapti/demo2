@@ -27,6 +27,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    Otp: {
+        type: String,
+        
+    },
+    expireIn: {
+        type: Date,
+        
+    },
     tokens: [
         {
             token: {
