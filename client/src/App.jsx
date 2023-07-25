@@ -7,6 +7,8 @@ import Contact from './components/Contact'
 import Login from './components/Login'
 import Singup from './components/Singup'
 import Logout from './components/Logout'
+import ForgetPassword from './components/ForgetPassword'
+import ResetPassword from './components/ResetPassword'
 
 
 const App = () => {
@@ -20,6 +22,8 @@ const App = () => {
     <Route exact path="/login" element={<Login/>}/>
     <Route exact path="/singup" element={<Singup/>}/>
     <Route exact path="/logout" element={<Logout/>}/>
+    <Route exact path="/forgetpassword/:id/:token" element={<ForgetPassword/>}/>
+    <Route exact path="/resetpassword" element={<ResetPassword/>}/>
     
     </Routes>
     

@@ -128,46 +128,76 @@ router.get('/logout', (req, res) => {
  
 
 router.post('/forgetpassword', async (req, res) => {
-  try{
   const { email } = req.body;
 
   if (!email ) {
     return res.status(404).json({ error: "plz filled the data" });
   }
 
-  const Data = await User.findOne({ email: email });
+  try{
+  
 
-  if(Data){
-  const otpCode = Math.floor((Math.random()*10000)+1);
-  const expire = Date.now() + 10*60 * 60 * 1000;
-    // const otp = new Otp({
-    //   email:email,
-    //   code: otpCode,
-    //   expireIn: new Date().getTime() + 300*1000
-    // })
-    // await otp.save();
+    const Data = await User.findOne({ email: email });
 
-   const data = await User.updateOne({email:Data.email}, {$set:{Otp:otpCode, expireIn:expire }}) 
-
-    const info = await transporter.sendMail({
-      from:'prajaptimukesh770@gmail.com', 
-      to: Data.email,
-      subject: "send otp",
-      text: `otp for your reset password is: ${otpCode}`, 
-     
+    const token = jwt.sign({_id:Data._id}, process.env.SECRET_KEY,{
+      expiresIn:"120s"
     });
-    console.log("Message sent: %s", info.messageId);
-   
-    res.status(200).json({ massage: "Email sent, please check your email" });
 
-  }else{
-    res.status(400).json({ error: "email  Id not exist" });
+
+    const setusertoken = await User.findByIdAndUpdate({_id:Data._id},{verifiTokan:token},{new:true});
+
+    if(setusertoken){
+      const mailOption = {
+            from:'prajaptimukesh770@gmail.com', 
+            to: Data.email,
+            subject: "sending Email for password reset",
+            text: `This Link Valid For 2 MINUTES http://localhost:5173/forgetpassword/${Data.id}/${setusertoken.verifiTokan} `
+           
+          }
+
+          transporter.sendMail(mailOption,(error, info)=>{
+            if(error){
+              console.log("error", error);
+              res.status(401).json({status:201, massage: "email not sent"})
+            }else{
+              console.log("Email sent", info.response);
+              res.status(201).json({status:201, massage: "email  sent successfully"})
+          }
+    })
   }
-}catch (err) {
-  console.log(err);
-}
 
-});
+  }catch (error) {
+    res.status(401).json({status:401, massage: "Invalid user"})
+  }
+})
+
+  // if(Data){
+  // const otpCode = Math.floor((Math.random()*10000)+1);
+  // const expire = Date.now() + 10*60 * 60 * 1000;
+  //   // const otp = new Otp({
+  //   //   email:email,
+  //   //   code: otpCode,
+  //   //   expireIn: new Date().getTime() + 300*1000
+  //   // })
+  //   // await otp.save();
+
+  //  const data = await User.updateOne({email:Data.email}, {$set:{Otp:otpCode, expireIn:expire }}) 
+
+  //   const info = await transporter.sendMail({
+  //     from:'prajaptimukesh770@gmail.com', 
+  //     to: Data.email,
+  //     subject: "send otp",
+  //     text: `otp for your reset password is: ${otpCode}`, 
+     
+  //   });
+  //   console.log("Message sent: %s", info.messageId);
+   
+  //   res.status(200).json({ massage: "Email sent, please check your email" });
+
+  // }else{
+  //   res.status(400).json({ error: "email  Id not exist" });
+  // }
+
 
 
 router.post("/resetpassword", async (req, res) => {
@@ -186,8 +216,10 @@ router.post("/resetpassword", async (req, res) => {
       if(diff < 0){
         return res.status(404).json({ error: "Token Expire" });
       }else{
-        
-        return res.status(200).json({ massage: "Token verified" });
+        const data = await User.updateOne({Otp:userLogin.Otp}, {$set:{Otp:'', password:req.body.password }})
+       
+        return res.status(404).json({ error: "resetpassword" });
+
       }
       }else{
         return res.status(400).json({ error: "Invalid Otp" });

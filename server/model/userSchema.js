@@ -43,7 +43,11 @@ const userSchema = new mongoose.Schema({
             }
         }
 
-    ]
+    ],
+    verifiTokan: {
+        type: String
+        
+    }
     
 })
 
