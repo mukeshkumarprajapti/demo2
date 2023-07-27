@@ -151,7 +151,7 @@ router.post('/forgetpassword', async (req, res) => {
             from:'prajaptimukesh770@gmail.com', 
             to:email,
             subject: "sending Email for password reset",
-            text: `This Link Valid For 1 MINUTES http://localhost:5173//forgetpassword/${Data.id}/${setusertoken.verifiTokan} `
+            text: `This Link Valid For 1 MINUTES http://localhost:5173/forgetpassword/${Data.id}/${setusertoken.verifiTokan} `
            
           }
 
@@ -232,7 +232,59 @@ router.post('/forgetpassword', async (req, res) => {
 
 //verify user for forget password
 
-router.get("/forgetpassword/:id/:token")
+router.get("/forgetpassword/:id/:token", async (req, res) => {
+  const {id, token} = req.params;
+
+  try{
+    const validuser = await User.findOne({_id:id, verifiTokan:token});
+
+    const verifytoken = jwt.verify(token, process.env.SECRET_KEY);
+
+    console.log(verifytoken)
+
+    if(validuser && verifytoken._id){
+      res.status(201).json({status:201, validuser})
+    }else{
+      res.status(401).json({status:401, message:"user not exist"})
+    }
+
+  }catch(error){
+    res.status(401).json({status:401, error})
+  }
+})
+
+
+//change password
+
+router.post("/:id/:token", async (req, res) => {
+  const {id, token} = req.params;
+
+  const {password} = req.body;
+
+  try{
+    const validuser = await User.findOne({_id:id, verifiTokan:token});
+
+    const verifytoken = jwt.verify(token, process.env.SECRET_KEY);
+
+    
+
+    if(validuser && verifytoken._id){
+       const newPassword = await bcrypt.hash(password, 12);
+
+       const setnewPassword = await User.findByIdAndUpdate({_id:id}, {password:newPassword});
+        
+
+       setnewPassword.save();
+
+      res.status(201).json({status:201, setnewPassword})
+    }else{
+      res.status(401).json({status:401, message:"user not exist"})
+    }
+
+  }catch(error){
+    res.status(401).json({status:401, error})
+  }
+})
 
 
 module.exports = router;

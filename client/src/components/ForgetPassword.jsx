@@ -7,9 +7,14 @@ const ForgetPassword = () => {
 
   const {id, token} = useParams();
 
+  const [password, setPassword] = useState('');
+
+  const [massage, setMassage] = useState('');
+
+
   const userValid = async () => {
     const res = await fetch(`http://localhost:5000/resetpassword/${id}/${token}`, {
-      method: 'POST',
+      method: 'GET',
       headers: {'Content-Type': 'application/json'}
       
      });
@@ -23,6 +28,36 @@ const ForgetPassword = () => {
      }
 
   }
+
+  const handleInputs = (e) => {
+    setPassword(e.target.value)
+    
+   }
+
+
+   const sendpassword = async () => {
+    e.preventDefault();
+
+    const res = await fetch('http://localhost:5000/${id}/${token}', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+         password
+      }),
+      credentials: "include"
+
+    });
+
+    const data = await res.json();
+
+     if(data.status === 201){
+      setPassword("")
+      setMassage(true)
+     }else{
+      res.status(401).json({status:401, error:"token Expired generate new Link"})
+     }
+
+   }
 
   useEffect(() =>{
     userValid()
@@ -45,9 +80,9 @@ const ForgetPassword = () => {
                 
                 <div className="mb-3">
                   <label className="form-label">New password :</label>
-                  <input type="password" className='form-control w-75' name='password'  id='password'   autoComplete="off"/>
+                  <input type="password" className='form-control w-75' name='password'  id='password' value={password} onChange={handleInputs}   autoComplete="off"/>
                 </div>
-                <button type="submit"  className="btn btn-primary">Send</button>
+                <button type="submit" onClick={sendpassword} className="btn btn-primary">Send</button>
                
 
               </form>
