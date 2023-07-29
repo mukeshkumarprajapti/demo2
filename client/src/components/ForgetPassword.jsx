@@ -7,13 +7,13 @@ const ForgetPassword = () => {
 
   const {id, token} = useParams();
 
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
 
   const [massage, setMassage] = useState('');
 
 
   const userValid = async () => {
-    const res = await fetch(`http://localhost:5000/resetpassword/${id}/${token}`, {
+    const res = await fetch(`http://localhost:5000/forgetpassword/${id}/${token}`, {
       method: 'GET',
       headers: {'Content-Type': 'application/json'}
       
@@ -29,16 +29,17 @@ const ForgetPassword = () => {
 
   }
 
-  const handleInputs = (e) => {
+  
+
+   const handleInputs = (e) => {
     setPassword(e.target.value)
-    
    }
 
 
-   const sendpassword = async () => {
+   const sendpassword = async (e) => {
     e.preventDefault();
 
-    const res = await fetch('http://localhost:5000/${id}/${token}', {
+    const res = await fetch(`http://localhost:5000/${id}/${token}`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -77,10 +78,12 @@ const ForgetPassword = () => {
             <div className="col-5 ">
               <h6 className="fw-bold fs-1 text-center mb-3" >Enter your New password </h6>
               <form action="" method="POST">
+
+                {massage ? <p style={{color: 'green', fontWeight: 'bold'}}>password Successfully Update</p>: " "}
                 
                 <div className="mb-3">
                   <label className="form-label">New password :</label>
-                  <input type="password" className='form-control w-75' name='password'  id='password' value={password} onChange={handleInputs}   autoComplete="off"/>
+                  <input type="password" className='form-control w-75' name='password'  id='password' value={password} onChange={handleInputs} autoComplete="off"/>
                 </div>
                 <button type="submit" onClick={sendpassword} className="btn btn-primary">Send</button>
                

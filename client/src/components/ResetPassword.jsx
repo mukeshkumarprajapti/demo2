@@ -25,7 +25,7 @@ const ResetPassword = () => {
    const sandLink = async (e) => {
     e.preventDefault();
 
-    const { email, password} = user;
+    const { email} = user;
     
     const res = await fetch('http://localhost:5000/forgetpassword', {
       method: 'POST',

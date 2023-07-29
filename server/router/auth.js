@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const moment = require('moment');
+const randomstring = require("randomstring")
 const authenticate = require('../middleware/authenticate');
 
 
@@ -139,9 +139,8 @@ router.post('/forgetpassword', async (req, res) => {
 
     const Data = await User.findOne({ email: email });
 
-    const token = jwt.sign({_id:Data._id}, process.env.SECRET_KEY,{
-      expiresIn:"1d"
-    });
+    const token = randomstring.generate();
+  
 
 
     const setusertoken = await User.findByIdAndUpdate({_id:Data._id},{verifiTokan:token},{new:true});
@@ -151,7 +150,7 @@ router.post('/forgetpassword', async (req, res) => {
             from:'prajaptimukesh770@gmail.com', 
             to:email,
             subject: "sending Email for password reset",
-            text: `This Link Valid For 1 MINUTES http://localhost:5173/forgetpassword/${Data.id}/${setusertoken.verifiTokan} `
+            text: `This Link Valid For 1 MINUTES http://localhost:5173/forgetpassword/${Data._id}/${setusertoken.verifiTokan} `
            
           }
 
@@ -171,85 +170,25 @@ router.post('/forgetpassword', async (req, res) => {
   }
 })
 
-  // if(Data){
-  // const otpCode = Math.floor((Math.random()*10000)+1);
-  // const expire = Date.now() + 10*60 * 60 * 1000;
-  //   // const otp = new Otp({
-  //   //   email:email,
-  //   //   code: otpCode,
-  //   //   expireIn: new Date().getTime() + 300*1000
-  //   // })
-  //   // await otp.save();
-
-  //  const data = await User.updateOne({email:Data.email}, {$set:{Otp:otpCode, expireIn:expire }}) 
-
-  //   const info = await transporter.sendMail({
-  //     from:'prajaptimukesh770@gmail.com', 
-  //     to: Data.email,
-  //     subject: "send otp",
-  //     text: `otp for your reset password is: ${otpCode}`, 
-     
-  //   });
-  //   console.log("Message sent: %s", info.messageId);
-   
-  //   res.status(200).json({ massage: "Email sent, please check your email" });
-
-  // }else{
-  //   res.status(400).json({ error: "email  Id not exist" });
-  // }
-
-
-
-// router.post("/resetpassword", async (req, res) => {
-//   try {
-//     const { Otp } = req.body;
-
-//     if (!Otp) {
-//       return res.status(400).json({ error: "plz filled the data" });
-//     }
-
-//     const userLogin = await User.findOne({ Otp: Otp });
-
-//     if (userLogin) {
-//       const currentTime = Date.now();
-//       const diff = userLogin.expireIn - currentTime;
-//       if(diff < 0){
-//         return res.status(404).json({ error: "Token Expire" });
-//       }else{
-//         const data = await User.updateOne({Otp:userLogin.Otp}, {$set:{Otp:'', password:req.body.password }})
-       
-//         return res.status(404).json({ error: "resetpassword" });
-
-//       }
-//       }else{
-//         return res.status(400).json({ error: "Invalid Otp" });
-
-//     }
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
-
 //verify user for forget password
 
 router.get("/forgetpassword/:id/:token", async (req, res) => {
   const {id, token} = req.params;
-
   try{
     const validuser = await User.findOne({_id:id, verifiTokan:token});
 
-    const verifytoken = jwt.verify(token, process.env.SECRET_KEY);
+    // const verifytoken = jwt.verify(token, process.env.SECRET_KEY);
 
-    console.log(verifytoken)
+    // console.log(verifytoken)
 
-    if(validuser && verifytoken._id){
+    if(validuser){
       res.status(201).json({status:201, validuser})
     }else{
       res.status(401).json({status:401, message:"user not exist"})
     }
 
   }catch(error){
-    res.status(401).json({status:401, error})
+    res.status(401).json({status:401, error:"token not find"})
   }
 })
 
@@ -264,11 +203,7 @@ router.post("/:id/:token", async (req, res) => {
   try{
     const validuser = await User.findOne({_id:id, verifiTokan:token});
 
-    const verifytoken = jwt.verify(token, process.env.SECRET_KEY);
-
-    
-
-    if(validuser && verifytoken._id){
+    if(validuser ){
        const newPassword = await bcrypt.hash(password, 12);
 
        const setnewPassword = await User.findByIdAndUpdate({_id:id}, {password:newPassword});
