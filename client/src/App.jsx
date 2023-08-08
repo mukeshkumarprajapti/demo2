@@ -9,6 +9,7 @@ import Singup from './components/Singup'
 import Logout from './components/Logout'
 import ForgetPassword from './components/ForgetPassword'
 import ResetPassword from './components/ResetPassword'
+import Changepassword from './components/Changepassword'
 
 
 const App = () => {
@@ -24,6 +25,7 @@ const App = () => {
     <Route exact path="/logout" element={<Logout/>}/>
     <Route exact path="/forgetpassword/:id/:token"element={<ForgetPassword/>}/>
     <Route exact path="/resetpassword" element={<ResetPassword/>}/>
+    <Route exact path="/changepassword" element={<Changepassword/>}/>
     
     </Routes>
     

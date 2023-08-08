@@ -31,6 +31,9 @@ const Navbar = () => {
         <li className="nav-item">
           <NavLink className="nav-link active" aria-current="page" to="/logout">Logout</NavLink>
         </li>
+        <li className="nav-item">
+          <NavLink className="nav-link active" aria-current="page" to="/changepassword">change password</NavLink>
+        </li>
         
         
        

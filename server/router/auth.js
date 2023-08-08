@@ -222,4 +222,44 @@ router.post("/:id/:token", async (req, res) => {
 })
 
 
+// updatePassword route
+
+router.patch("/updatepassword",  authenticate , async(req, res) =>{
+ 
+
+  try{
+    
+    const {oldpassword, newpassword } =req.body;
+
+    if (!oldpassword || !newpassword) {
+      return res.status(400).json({ error: "plz filled the data" });
+    }
+
+    const validuser =await User.findById(req.user.id).select('+password');
+
+    if (!validuser){
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(oldpassword, validuser.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid old password' });
+    }
+      const newPassword = await bcrypt.hash(newpassword, 12);
+
+      const setnewPassword = await User.findByIdAndUpdate({_id:id}, {password:newPassword},{new:true});
+       
+
+      setnewPassword.save();
+
+      res.status(200).json({ massage: "password update successfully" });
+    
+
+  }catch(error){
+    console.log(error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 module.exports = router;
