@@ -42,7 +42,14 @@ router.get("/", (req, res) => {
 // ****using async await
 
 router.post("/register", async (req, res) => {
-  const { name, email, phone, work, password, cpassword } = req.body;
+  const { name, email, phone, work, password, cpassword, } = req.body;
+  const  referral_by = req.query.referral_by
+  const refferalCode = randomString.generate({
+    length: 6,
+    charset: 'alphanumeric',
+    capitalization: 'uppercase'
+    
+  });
 
   if (!name || !email || !phone || !work || !password || !cpassword) {
     return res.status(422).json({ error: "plz filled the field property" });
@@ -56,9 +63,19 @@ router.post("/register", async (req, res) => {
     } else if (password != cpassword) {
       return res.status(422).json({ error: "password are not matching" });
     } else {
-      const user = new User({ name, email, phone, work, password, cpassword });
+      
+      const user = new User({ name, email, phone, work, password, cpassword, referral_by, referral_code:refferalCode, referral_point:0 });
 
-      await user.save();
+      await user.save(); 
+
+      if (user.referredBy) {
+        const referringUser = await User.findOne({ referralCode: user.referral_by });
+        if (referringUser) {
+          // Update the referring user's referral count or rewards
+          referringUser.referralCount++;
+          await referringUser.save();
+        }
+      }
 
       res.status(201).json({ massage: "user registered successfuly" });
     }
@@ -139,9 +156,11 @@ router.post('/forgetpassword', async (req, res) => {
 
     const Data = await User.findOne({ email: email });
 
+    
     const token = randomstring.generate();
   
 
+    
 
     const setusertoken = await User.findByIdAndUpdate({_id:Data._id},{verifiTokan:token},{new:true});
 
@@ -224,42 +243,36 @@ router.post("/:id/:token", async (req, res) => {
 
 // updatePassword route
 
-router.patch("/updatepassword",  authenticate , async(req, res) =>{
- 
 
-  try{
-    
-    const {oldpassword, newpassword } =req.body;
+router.put('/updatepassword', authenticate, async (req, res) => {
+  const { currentpassword, newpassword } = req.body;
+  const userId = req.user._id
+ console.log(userId)
+  
+  try {
+    const user = await User.findById(userId);
 
-    if (!oldpassword || !newpassword) {
-      return res.status(400).json({ error: "plz filled the data" });
-    }
-
-    const validuser =await User.findById(req.user.id).select('+password');
-
-    if (!validuser){
+    if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const isPasswordValid = await bcrypt.compare(oldpassword, validuser.password);
-
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid old password' });
+    const passwordMatch = await bcrypt.compare(currentpassword, user.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ message: 'Incorrect current password' });
     }
-      const newPassword = await bcrypt.hash(newpassword, 12);
 
-      const setnewPassword = await User.findByIdAndUpdate({_id:id}, {password:newPassword},{new:true});
-       
-
-      setnewPassword.save();
-
-      res.status(200).json({ massage: "password update successfully" });
+    const hashedNewPassword = await bcrypt.hash(newpassword, 12);
     
+    const setnewPassword = await User.findByIdAndUpdate({_id:userId}, {password:hashedNewPassword});
+        
 
-  }catch(error){
-    console.log(error);
-    return res.status(500).json({ message: 'Internal server error' });
+       setnewPassword.save();
+
+    return res.status(200).json({ message: 'Password updated successfully' });
+  } catch (error) {
+    return res.status(500).json({ message: 'An error occurred', error: error.message });
   }
 });
+
 
 module.exports = router;

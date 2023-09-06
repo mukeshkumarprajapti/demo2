@@ -47,6 +47,16 @@ const userSchema = new mongoose.Schema({
     verifiTokan: {
         type: String
         
+    },
+    referral_code: {
+        type: String
+    },
+    referral_by: {
+        type: String
+    },
+    referral_point: {
+        type: Number,
+        default: 0
     }
     
 })

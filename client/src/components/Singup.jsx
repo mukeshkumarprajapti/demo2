@@ -23,13 +23,13 @@ const Singup = () => {
    const PostData = async (e) => {
     e.preventDefault();
 
-    const { name, email, phone, work, password, cpassword} = user;
+    const { name, email, phone, work, password, cpassword, referral_by} = user;
     
     const res = await fetch('http://localhost:5000/register', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        name, email, phone, work, password, cpassword
+        name, email, phone, work, password, cpassword, referral_by
       })
     });
 
@@ -82,6 +82,10 @@ const Singup = () => {
                 <div className="mb-3">
                   <label className="form-label">Conform Password :</label>
                   <input type="password" className='form-control w-75' name='cpassword'  id='cpassword' autoComplete="off" value={user.cpassword} onChange={handleInputs}/>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Referral Code:</label>
+                  <input type="text" className='form-control w-75' name='referral_by'  id='referral_by' autoComplete="off" value={user.referral_by} onChange={handleInputs}/>
                 </div>
                 <button type="submit" className="btn btn-primary" onClick={PostData} >Resistation</button>
 

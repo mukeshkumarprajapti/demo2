@@ -3,90 +3,52 @@ import avatar from "../images/avatar_3.jpg"
 import { NavLink, useNavigate, useParams  } from 'react-router-dom'
 
 const Changepassword = () => {
-    const navigate  = useNavigate();
+  const navigate  = useNavigate();
 
+  const [user, setUser] = useState({
+    currentpassword:'', newpassword:'' 
+   });
 
+   let name,  value;
 
-    const [user, setUser] = useState({
-      oldpassword:'', newpassword:'' 
-     });
+   const handleInputs = (e) => {
+    console.log(e);
+    name = e.target.name;
+    value = e.target.value;
+
+    setUser({...user, [name]:value});
+   }
+   
+   const changePassword = async (e) => {
+    e.preventDefault();
+
+    const { currentpassword, newpassword} = user;
+    const token = localStorage.getItem('jwtoken');
+    try {
+         // Get the stored token
+        const response = await fetch('http://localhost:5000/updatepassword', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            // Include the JWT token in the request headers
+            Authorization: `${token}`,
+          },
+          body: JSON.stringify({
+            currentpassword,
+            newpassword,
+          }),
+          credentials: "include"
+        });
   
-     let name,  value;
-  
-     const handleInputs = (e) => {
-      console.log(e);
-      name = e.target.name;
-      value = e.target.value;
-  
-      setUser({...user, [name]:value});
-     }
-     
-     const changePassword = async (e) => {
-      e.preventDefault();
-  
-      const { oldpassword, newpassword} = user;
-      
-      const res = await fetch('http://localhost:5000/changepassword', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-           oldpassword, newpassword
-        }),
-        credentials: "include"
-  
-      });
-  
-      const data = await res.json();
-  
-  
-  
-      if (res.status === 400 || !data ) {
-        window.alert("Invalid Credentials");
-        console.log("Invalid Credentials");
-      } else{
-        window.alert("login successfull");
-        console.log("login done");
-        navigate('/')
-       
-        
-  
-        
+        const data = await response.json();
+        console.log(data.message);
+        navigate('/');
+      } catch (error) {
+        console.error('An error occurred:', error);
       }
-     
-     }
-
-
-     const callAboutPage = async () => {
-        try {
-          const res = await fetch('http://localhost:5000/changepassword',{
-            method: 'GET',
-            headers: {
-               'Accept': 'application/json',
-                "Content-Type" : 'application/json'
-              },
-              credentials: "include"
-          });
-    
-          const data = await res.json();
-          console.log(data);
-          setUserData(data);
-    
-          if(!res.status === 200){
-            const error = new Error(res.error);
-            throw error;
-          }
-    
-    
-        } catch(err) {
-          console.log(err);
-          navigate('/login');
-        }
-      }
-    
-      useEffect(() => {
-        callAboutPage();
-      }, []);
-     
+   
+   }
+   
   return (
     <>
      <section>
@@ -103,7 +65,7 @@ const Changepassword = () => {
                 
                 <div className="mb-3">
                   <label className="form-label">Current Password :</label>
-                  <input type="password" className='form-control w-75' name='oldpassword'  id='oldpasword' value={user.oldpasswoed} onChange={handleInputs} autoComplete="off"/>
+                  <input type="password" className='form-control w-75' name='currentpassword'  id='currentpassword' value={user.currentpassword} onChange={handleInputs} autoComplete="off"/>
                 </div>
                 <div className="mb-3">
                   <label className="form-label">New Password :</label>

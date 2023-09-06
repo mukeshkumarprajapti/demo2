@@ -41,7 +41,7 @@ const ResetPassword = () => {
 
 
 
-    if (res.status === 400 || !data ) {
+    if (res.status === 401 || !data ) {
       window.alert("email  Id not exist");
       console.log("email  Id not exist");
     } else{

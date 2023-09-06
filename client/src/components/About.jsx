@@ -38,11 +38,16 @@ const About = () => {
     callAboutPage();
   }, []);
  
+
+    
+    
+      const referralLink = `http://localhost:5173/singup?referral_by=${useData.referral_code}`
   return (
     <>
     <form method="GET" >
     <p className="pt-5 text-center text-capitalize">WELCOME {useData.name} </p>
     <h1 className="text-center">We Are About Page</h1>
+    <a href={referralLink} className="text-center">{referralLink}</a>
     </form>
     
     </>

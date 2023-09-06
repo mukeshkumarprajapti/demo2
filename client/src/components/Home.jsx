@@ -5,6 +5,7 @@ const Home = () => {
     <>
     <p className="pt-5 text-center">WELCOME</p>
     <h1 className="text-center">We Are homepage</h1>
+    
     </>
   )
 }
