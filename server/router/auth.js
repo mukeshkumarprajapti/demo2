@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const randomstring = require("randomstring")
+const randomString = require("randomstring")
 const authenticate = require('../middleware/authenticate');
 
 
@@ -42,9 +42,9 @@ router.get("/", (req, res) => {
 // ****using async await
 
 router.post("/register", async (req, res) => {
-  const { name, email, phone, work, password, cpassword, } = req.body;
-  const  referral_by = req.query.referral_by
-  const refferalCode = randomString.generate({
+  const { name, email, phone, work, password, cpassword, referredBy } = req.body;
+  
+  const RefferalCode = randomString.generate({
     length: 6,
     charset: 'alphanumeric',
     capitalization: 'uppercase'
@@ -54,8 +54,22 @@ router.post("/register", async (req, res) => {
   if (!name || !email || !phone || !work || !password || !cpassword) {
     return res.status(422).json({ error: "plz filled the field property" });
   }
+  
+  let startingUserId = 1006090;
+    let isUnique = false;
 
   try {
+    while (!isUnique) {
+      const existingUser = await User.findOne({ userId: startingUserId }).lean();
+
+      if (!existingUser) {
+        isUnique = true;
+      } else {
+        startingUserId++;
+      }
+    }
+
+
     const userExist = await User.findOne({ email: email });
 
     if (userExist) {
@@ -63,21 +77,27 @@ router.post("/register", async (req, res) => {
     } else if (password != cpassword) {
       return res.status(422).json({ error: "password are not matching" });
     } else {
-      
-      const user = new User({ name, email, phone, work, password, cpassword, referral_by, referral_code:refferalCode, referral_point:0 });
+      if(referredBy){
+        const referrer = await User.findOne({referralCode: referredBy})
+        
+        if (referrer){
+          const user = new User({userId: startingUserId, name, email, phone, work, password, cpassword, referralCode:RefferalCode, points : 50, referredBy  });
 
-      await user.save(); 
-
-      if (user.referredBy) {
-        const referringUser = await User.findOne({ referralCode: user.referral_by });
-        if (referringUser) {
-          // Update the referring user's referral count or rewards
-          referringUser.referralCount++;
-          await referringUser.save();
+          await user.save(); 
+    
+          res.status(201).json({ massage: "user registered successfuly" });
         }
       }
 
+      const user = new User({userId: startingUserId, name, email, phone, work, password, cpassword, referralCode:RefferalCode });
+
+      await user.save(); 
+
       res.status(201).json({ massage: "user registered successfuly" });
+       
+       
+      
+      
     }
   } catch (err) {
     console.log(err);

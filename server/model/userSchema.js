@@ -3,10 +3,17 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const userSchema = new mongoose.Schema({
+
+    userId: {
+        type: Number,
+        required: true,
+         unique: true 
+       },
     name: {
         type:String,
         required: true
     }, 
+
     email: {
         type: String,
         required: true
@@ -48,13 +55,16 @@ const userSchema = new mongoose.Schema({
         type: String
         
     },
-    referral_code: {
-        type: String
+    referralCode: {
+        type: String,
+        unique: true
     },
-    referral_by: {
+    referredBy: {
         type: String
+        
+        
     },
-    referral_point: {
+    points: {
         type: Number,
         default: 0
     }

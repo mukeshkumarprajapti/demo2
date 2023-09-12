@@ -41,13 +41,16 @@ const About = () => {
 
     
     
-      const referralLink = `http://localhost:5173/singup?referral_by=${useData.referral_code}`
+      const referralLink = `http://localhost:5173/singup?referralcode=${useData.referralCode}`
   return (
     <>
     <form method="GET" >
     <p className="pt-5 text-center text-capitalize">WELCOME {useData.name} </p>
-    <h1 className="text-center">We Are About Page</h1>
-    <a href={referralLink} className="text-center">{referralLink}</a>
+    <h1 className="text-center mb-3">We Are About Page</h1>
+    <h4 className="text-center mb-3">User Id : {useData.userId}</h4>
+    <h4 className="text-center mb-3">Your referral link : <a href={referralLink} className="text-center">{referralLink}</a> </h4>
+    <h4 className="text-center">Your referral code : {useData.referralCode} </h4>
+    <h4 className="text-center">Your referral point : {useData.points} </h4>
     </form>
     
     </>

@@ -1,14 +1,16 @@
-import React, {useState} from 'react'
+import React, {useState } from 'react'
 import avatar from "../images/avatar_3.jpg"
 import { NavLink, useNavigate  } from 'react-router-dom'
 
+
 const Singup = () => {
   const navigate = useNavigate();
- 
+  
 
    const [user, setUser] = useState({
-    name:'', email:'', phone:'', work:'', password:'', cpasswords:'' 
+    name:'', email:'', phone:'', work:'', password:'', cpasswords:'', referredBy:'',
    });
+
 
    let name,  value;
 
@@ -23,13 +25,13 @@ const Singup = () => {
    const PostData = async (e) => {
     e.preventDefault();
 
-    const { name, email, phone, work, password, cpassword, referral_by} = user;
+    const { name, email, phone, work, password, cpassword, referredBy} = user;
     
     const res = await fetch('http://localhost:5000/register', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        name, email, phone, work, password, cpassword, referral_by
+        name, email, phone, work, password, cpassword, referredBy
       })
     });
 
@@ -85,7 +87,7 @@ const Singup = () => {
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Referral Code:</label>
-                  <input type="text" className='form-control w-75' name='referral_by'  id='referral_by' autoComplete="off" value={user.referral_by} onChange={handleInputs}/>
+                  <input type="text" className='form-control w-75' name='referredBy'  id='referredBy' autoComplete="off" value={user.referredBy} onChange={handleInputs}/>
                 </div>
                 <button type="submit" className="btn btn-primary" onClick={PostData} >Resistation</button>
 
