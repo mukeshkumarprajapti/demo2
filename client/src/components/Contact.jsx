@@ -42,7 +42,8 @@ const Contact = () => {
     <form method='GET'>
     <p className="pt-5 text-center">WELCOME</p>
     <h1 className="text-center">We Are Contact page</h1>
-    <h2 className="text-center">Mobile Number {useData.phone}</h2>
+    <h2 className="text-center">Mobile Number:  {useData.phone}</h2>
+    <h2 className="text-center">Email  :  {useData.email}</h2>
     </form>
     </>
   )

@@ -81,7 +81,7 @@ router.post("/register", async (req, res) => {
         const referrer = await User.findOne({referralCode: referredBy})
         
         if (referrer){
-          const user = new User({userId: startingUserId, name, email, phone, work, password, cpassword, referralCode:RefferalCode, points : 50, referredBy  });
+          const user = new User({userId: startingUserId, name, email, phone, work, password, cpassword, referralCode:RefferalCode, points : 50, referredBy, referredUserId: referrer.userId  });
 
           await user.save(); 
     
@@ -292,6 +292,59 @@ router.put('/updatepassword', authenticate, async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: 'An error occurred', error: error.message });
   }
+});
+
+router.get('/users', async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+   
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+router.post("/transferMoney", async(req, res) => {
+  console.log(req.body)
+  const { senderId, receiverId, amount:amountStr } = req.body;
+  const amount = Number(amountStr);
+console.log(senderId, receiverId, amount)
+// return res.status(201).json({ massage: "transaction successfuly" });
+
+
+try {
+  const sender = await User.findOne({username:senderId});
+  const receiver = await User.findOne({username:receiverId});
+
+  if (!sender || !receiver) {
+    res.status(400).json({ error: 'User not found' });
+    return;
+  }
+
+  if (sender.balance < amount) {
+    res.status(400).json({ error: 'Insufficient balance' });
+    return;
+  }
+
+  sender.balance -= amount;
+  receiver.balance += amount;
+
+  const transaction = new Transaction({
+    sender: sender._id,
+    receiver: receiver._id,
+    amount,
+  });
+
+  await sender.save();
+  await receiver.save();
+  await transaction.save();
+  res.status(201).json({ massage: "transaction successfuly" });
+  
+} catch (error) {
+  console.log(error);
+  res.status(500).json({ error: 'Server error' });
+}
 });
 
 
